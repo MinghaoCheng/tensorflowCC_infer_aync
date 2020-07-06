@@ -127,19 +127,16 @@ void Detector::feed_data(uint8_t BUFFER_ID, std::vector<cv::Mat> imgArray)
     cudaStream_t *CUDAstream;
     if(BUFFER_ID == BUFFER_ID_A)
     {
-        std::cout << "Feed A\n";
         dst_buffer = this->BufferA;
         CUDAstream = &this->CUDAstreamA;
     }
     else if(BUFFER_ID == BUFFER_ID_B)
     {
-        std::cout << "Feed B\n";
         dst_buffer = this->BufferB;
         CUDAstream = &this->CUDAstreamB;
     }
     else
     {
-        std::cout << "Feed C\n";
         dst_buffer = this->BufferC;
         CUDAstream = &this->CUDAstreamC;
     }
@@ -154,7 +151,6 @@ void Detector::feed_data(uint8_t BUFFER_ID, std::vector<cv::Mat> imgArray)
         cv::cvtColor(imgArray[i], fakeMat, cv::COLOR_BGR2RGB);
     }
     cudaMemcpyAsync(dst, p, this->batchSize * this->input_depth * this->input_height * this->input_width, cudaMemcpyHostToDevice, *CUDAstream);
-    std::cout << "Feed done\n";
 }
 
 void Detector::infer_thread_function(void)
@@ -174,17 +170,14 @@ void Detector::infer_thread_function(void)
             this->InferQueue.pop();
             if(this_infer == BUFFER_ID_A)
             {
-                std::cout << "Infer A\n";
                 tensor_buffer = this->BufferA;
             }
             else if(this_infer == BUFFER_ID_B)
             {
-                std::cout << "Infer B\n";
                 tensor_buffer = this->BufferB;
             }
             else //if(this_infer == BUFFER_ID_C)
             {
-                std::cout << "Infer C\n";
                 tensor_buffer = this->BufferC;
             }
             
@@ -193,7 +186,6 @@ void Detector::infer_thread_function(void)
             {
                 std::cout << "MESSAGE::dectection.cpp::Running model failed\n";
             }
-            std::cout << "Infer done\n";
             if(this_infer == BUFFER_ID_A)
             {
                 this->BufferA_busy = false;
